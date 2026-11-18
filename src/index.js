@@ -122,6 +122,28 @@ async function api(req,env){
       env.DB.prepare("SELECT COALESCE(SUM(subtotal_cents),0) n FROM orders WHERE status='paid'").first()
     ]);return json({products:p.n,orders:o.n,revenue_usd:(s.n/100).toFixed(2)});
   }
+  if(path==="/api/admin/products" && method==="GET"){
+    const u=await currentUser(req,env);if(!u||u.role!=="admin")return json({error:"Admin access required."},403);
+    const rows=(await env.DB.prepare("SELECT id,slug,name,description,price_cents,currency,cover_url,active,created_at FROM products ORDER BY created_at DESC").all()).results;
+    return json(rows);
+  }
+  if(path.startsWith("/api/admin/products/") && method==="PATCH"){
+    const u=await currentUser(req,env);if(!u||u.role!=="admin")return json({error:"Admin access required."},403);
+    const id=decodeURIComponent(path.split("/").pop()),b=await body(req);
+    const name=String(b.name||"").trim(),slug=String(b.slug||"").trim().toLowerCase(),description=String(b.description||""),price=Math.round(Number(b.price)*100),cover=String(b.cover_url||"");
+    if(!name||!slug||!Number.isInteger(price)||price<1)return json({error:"Name, slug and positive price are required."},400);
+    try{
+      await env.DB.prepare("UPDATE products SET name=?,slug=?,description=?,price_cents=?,cover_url=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(name,slug,description,price,cover,id).run();
+      if(b.file_key)await env.DB.prepare("UPDATE products SET file_key=? WHERE id=?").bind(String(b.file_key),id).run();
+    }catch{return json({error:"Could not update product. Check whether the slug is already in use."},409);}
+    return json({ok:true});
+  }
+  if(path.startsWith("/api/admin/products/") && method==="DELETE"){
+    const u=await currentUser(req,env);if(!u||u.role!=="admin")return json({error:"Admin access required."},403);
+    const id=decodeURIComponent(path.split("/").pop());
+    await env.DB.prepare("UPDATE products SET active=0,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(id).run();
+    return json({ok:true,unpublished:true});
+  }
   if(path==="/api/admin/upload" && method==="POST"){
     const u=await currentUser(req,env);if(!u||u.role!=="admin")return json({error:"Admin access required."},403);
     const form=await req.formData(), file=form.get("file");
