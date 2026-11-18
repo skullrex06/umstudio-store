@@ -15,7 +15,7 @@ migrations_dir = "migrations"
 
 [vars]
 SITE_NAME = "UMstudio"
-SITE_URL = "https://YOUR-DOMAIN.example"
+SITE_URL = "https://umstudio-store.umayaris06.workers.dev"
 CURRENCY = "usd"
 DOWNLOAD_TOKEN_TTL_SECONDS = "900"
 SESSION_TTL_SECONDS = "2592000"
