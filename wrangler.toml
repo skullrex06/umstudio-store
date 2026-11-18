@@ -10,7 +10,7 @@ run_worker_first = true
 [[d1_databases]]
 binding = "DB"
 database_name = "umstudio-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "cd8dc3dc-53ea-4ebc-88aa-00b12d25c481"
 migrations_dir = "migrations"
 
 [vars]
