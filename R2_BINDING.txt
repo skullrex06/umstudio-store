@@ -1,0 +1,5 @@
+Add this to wrangler.toml under the D1 binding:
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "umstudio-private-files"

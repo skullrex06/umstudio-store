@@ -1,0 +1,25 @@
+name = "umstudio-store"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "umstudio-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[vars]
+SITE_NAME = "UMstudio"
+SITE_URL = "https://YOUR-DOMAIN.example"
+CURRENCY = "usd"
+DOWNLOAD_TOKEN_TTL_SECONDS = "900"
+SESSION_TTL_SECONDS = "2592000"
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "umstudio-private-files"
